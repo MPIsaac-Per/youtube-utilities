@@ -26,8 +26,8 @@ def get_channel_id_from_name(channel_name):
             return item["id"]["channelId"]
     return None
 
-# Function to get video URLs from a channel
-def get_video_urls_from_channel(channel_id, max_videos):
+# Function to get video URLs and dates from a channel
+def get_video_urls_and_dates_from_channel(channel_id, max_videos):
     request = youtube.search().list(
         part="snippet",
         channelId=channel_id,
@@ -36,14 +36,15 @@ def get_video_urls_from_channel(channel_id, max_videos):
     )
     response = request.execute()
 
-    video_urls = []
+    video_data = []
     for item in response.get("items", []):
         if item["id"].get("videoId"):
             video_id = item["id"]["videoId"]
             video_url = f"https://www.youtube.com/watch?v={video_id}"
-            video_urls.append(video_url)
+            video_date = item["snippet"]["publishedAt"][:10]  # Extract date part
+            video_data.append((video_url, video_date))
 
-    return video_urls
+    return video_data
 
 # Main function to process videos
 def main(channel_name, max_videos):
@@ -52,15 +53,15 @@ def main(channel_name, max_videos):
         print(f"Channel not found for name: {channel_name}")
         return
 
-    video_urls = get_video_urls_from_channel(channel_id, max_videos)
+    video_data = get_video_urls_and_dates_from_channel(channel_id, max_videos)
     output_dir = "output"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     python_executable = os.path.join('.venv', 'Scripts', 'python.exe')
 
-    for url in video_urls:
-        subprocess.run([python_executable, "extract_transcript.py", url, channel_name])
+    for url, video_date in video_data:
+        subprocess.run([python_executable, "extract_transcript.py", url, channel_name, video_date])
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

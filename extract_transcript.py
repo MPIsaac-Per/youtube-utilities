@@ -3,7 +3,7 @@ import os
 from youtube_transcript_api import YouTubeTranscriptApi
 
 
-def extract_transcript(youtube_url, channel_name, output_dir):
+def extract_transcript(youtube_url, channel_name, output_dir, video_date):
     try:
         video_id = youtube_url.split('v=')[-1]
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
@@ -13,8 +13,8 @@ def extract_transcript(youtube_url, channel_name, output_dir):
         for entry in transcript:
             md_content += f"{entry['start']:.2f}s: {entry['text']}\n"
 
-        # Write to markdown file with channel name and video ID
-        output_path = os.path.join(output_dir, f"{channel_name}-{video_id}.md")
+        # Write to markdown file with channel name, video date, and video ID
+        output_path = os.path.join(output_dir, f"{channel_name}-{video_date}-{video_id}.md")
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(md_content)
 
@@ -24,12 +24,13 @@ def extract_transcript(youtube_url, channel_name, output_dir):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python extract_transcript.py <youtube_url> <channel_name>")
+    if len(sys.argv) != 4:
+        print("Usage: python extract_transcript.py <youtube_url> <channel_name> <video_date>")
     else:
         youtube_url = sys.argv[1]
         channel_name = sys.argv[2]
+        video_date = sys.argv[3]
         output_dir = "output"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-        extract_transcript(youtube_url, channel_name, output_dir)
+        extract_transcript(youtube_url, channel_name, output_dir, video_date)
