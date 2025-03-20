@@ -4,7 +4,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from datetime import datetime
 
 
-def extract_transcript(youtube_url, channel_name=None, output_dir="output", video_date=None):
+def extract_transcript(youtube_url, output_dir="output", channel_name=None, video_date=None):
     try:
         video_id = youtube_url.split('v=')[-1]
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
@@ -14,12 +14,14 @@ def extract_transcript(youtube_url, channel_name=None, output_dir="output", vide
         for entry in transcript:
             md_content += f"{entry['start']:.2f}s: {entry['text']}\n"
 
+        # Create filename based on available information
         # Use defaults if parameters are not provided
         channel_name = channel_name or "unknown_channel"
         video_date = video_date or datetime.now().strftime("%Y-%m-%d")
-
+        
         # Write to markdown file with channel name, video date, and video ID
         output_path = os.path.join(output_dir, f"{channel_name}-{video_date}-{video_id}.md")
+        
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(md_content)
 
@@ -39,4 +41,4 @@ if __name__ == "__main__":
         output_dir = "output"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-        extract_transcript(youtube_url, channel_name, output_dir, video_date)
+        extract_transcript(youtube_url, output_dir, channel_name, video_date)
