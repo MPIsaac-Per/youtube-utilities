@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcript Extractor</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #uploadButton {
+            background-color: #5cb85c;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #uploadButton:hover {
+            background-color: #4cae4c;
+            transform: translateY(-2px);
+        }
+
+        #uploadButton:active {
+            transform: translateY(1px);
+        }
+        #transcriptBox {
+            width: 80%;
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f8f8f8;
+            resize: vertical;
+        }
+
+        #transcriptBox:disabled {
+            background-color: #eee;
+            color: #999;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Transcript Extractor</h1>
+    </header>
+
+    <main>
+        <input type="file" id="fileInput" style="display: none;">
+        <label for="fileInput" id="uploadButton">Upload File</label>
+        <textarea id="transcriptBox" disabled placeholder="Transcript will appear here..."></textarea>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Transcript Extractor</p>
+    </footer>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('transcriptBox').value = 'File selected: ' + file.name;
+            }
+        });
+    </script>
+
+</body>
+</html>
