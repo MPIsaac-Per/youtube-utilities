@@ -22,3 +22,8 @@ wheels/
 *.egg
 
 .VSCodeCounter/
+
+# Environment variables
+.env
+.env.local
+.env.*.local

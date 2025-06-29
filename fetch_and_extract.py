@@ -2,14 +2,14 @@ import os
 import subprocess
 import sys
 import googleapiclient.discovery
+from config import config
 
 # Initialize the YouTube API client
 api_service_name = "youtube"
 api_version = "v3"
-DEVELOPER_KEY = "AIzaSyCnr4HOnuDCoUv0jJ7TMy9zZ5TwWsVnrc8"  # Replace with your actual API key
 
 youtube = googleapiclient.discovery.build(
-    api_service_name, api_version, developerKey=DEVELOPER_KEY)
+    api_service_name, api_version, developerKey=config.get_current_api_key())
 
 # Function to get channel ID from channel name
 def get_channel_id_from_name(channel_name):
@@ -31,7 +31,7 @@ def get_video_urls_and_dates_from_channel(channel_id, max_videos):
     request = youtube.search().list(
         part="snippet",
         channelId=channel_id,
-        maxResults=max_videos,  # Use the max_videos parameter
+        maxResults=min(max_videos, config.max_results_per_page),  # Respect API limits
         order="date"  # Sort by newest first
     )
     response = request.execute()
@@ -54,11 +54,10 @@ def main(channel_name, max_videos):
         return
 
     video_data = get_video_urls_and_dates_from_channel(channel_id, max_videos)
-    output_dir = "output"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    config.ensure_output_dir()
 
-    python_executable = os.path.join('.venv', 'Scripts', 'python.exe')
+    # Use platform-agnostic Python executable
+    python_executable = sys.executable
 
     for url, video_date in video_data:
         subprocess.run([python_executable, "extract_transcript.py", url, channel_name, video_date])
